@@ -16,47 +16,53 @@
 import Foundation
 import MojioCore
 
-public protocol IdleEventState: Codable {
-    
-    associatedtype I: IdleStateModel
-    associatedtype L: LocationModel
-    
-    var eventState: I? { get }
-    var eventLocation: L? { get }
+public enum LightType: String, Codable {
+    case solid = "Solid"
+    case breathing = "Breathing"
+    case blinking = "Blinking"
 }
 
-public struct IdleEvent: IdleEventState {
+public protocol LightModel: Codable {
+    var enabled: Bool? { get }
+    var type: LightType? { get }
+}
+
+public struct Light: LightModel {
+    public let enabled: Bool?
+    public let type: LightType?
     
-    public typealias I = IdleState
-    public typealias L = Location
-    
-    public var eventState: I? = nil
-    public var eventLocation: L? = nil
-    
-    public enum CodingKeys: String, CodingKey, CompoundWordStyle {
-        case eventState = "IdleState"
-        case eventLocation = "Location"
+    public enum CodingKeys: String, CodingKey {
+        case enabled = "Enabled"
+        case type = "Type"
     }
     
     public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
         do {
-            let container = try decoder.container(keyedBy: DynamicCodingKey.self)
-            
-            self.eventState = try container.decodeIfPresentIgnoringCase(IdleState.self, forKey: CodingKeys.eventState)
-            self.eventLocation = try container.decodeIfPresentIgnoringCase(Location.self, forKey: CodingKeys.eventLocation)
+            self.enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled)
+            self.type = try container.decodeIfPresent(LightType.self, forKey: .type)
         }
         catch {
             debugPrint(error)
             throw error
         }
     }
+}
+
+public struct LightUpdate: Codable {
+    public var enabled: Bool?
+    public var type: LightType?
+    
+    public enum CodingKeys: String, CodingKey {
+        case enabled = "Enabled"
+        case type = "Type"
+    }
     
     public func encode(to encoder: Encoder) throws {
-        
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encodeIfPresent(self.eventState, forKey: .eventState)
-        try container.encodeIfPresent(self.eventLocation, forKey: .eventLocation)
+        try container.encodeIfPresent(self.enabled, forKey: .enabled)
+        try container.encodeIfPresent(self.type, forKey: .type)
     }
 }
