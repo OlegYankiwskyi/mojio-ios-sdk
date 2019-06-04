@@ -105,7 +105,7 @@ public struct ActivityLocation: ActivityLocationModel {
         self.radius = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.radius)
     }
     
-    public init(latitude: Double, longitude: Double, altitude: Double) {
+    public init(latitude: Double, longitude: Double, altitude: Double?) {
         self.id = nil
         self.type = nil
         self.name = nil
