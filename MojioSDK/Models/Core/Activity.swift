@@ -222,12 +222,12 @@ public struct Activity: ActivityModel {
         
         if encodedLocation == nil,
             let latitude = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.latitude),
-            let longitude = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.longitude),
-            let altitude = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.altitude)
+            let longitude = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.longitude)
         {
+            let altitude = try container.decodeIfPresentIgnoringCase(Double.self, forKey: CodingKeys.altitude)
             encodedLocation = ActivityLocation(latitude: latitude, longitude: longitude, altitude: altitude)
         }
-        
+                
         self.location = encodedLocation
     }
     
